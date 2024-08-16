@@ -105,11 +105,11 @@ class AppDynamicsInstaller(PHPExtensionHelper):
                         # load the app details from user-provided service
                         print("Setting AppDynamics App, Tier and Node names from user-provided service")
                         AppDynamicsInstaller._app_name = AppDynamicsInstaller._appdynamics_credentials.get("application-name")
-                        print("User-provided service application-name = " + AppDynamicsInstaller._app_name)
+                        print(("User-provided service application-name = " + AppDynamicsInstaller._app_name))
                         AppDynamicsInstaller._tier_name = AppDynamicsInstaller._appdynamics_credentials.get("tier-name")
-                        print("User-provided service tier-name = " + AppDynamicsInstaller._tier_name)
+                        print(("User-provided service tier-name = " + AppDynamicsInstaller._tier_name))
                         AppDynamicsInstaller._node_name = AppDynamicsInstaller._appdynamics_credentials.get("node-name")
-                        print("User-provided service node-name = " + AppDynamicsInstaller._node_name)
+                        print(("User-provided service node-name = " + AppDynamicsInstaller._node_name))
                     except Exception:
                         print("Exception occurred while setting AppDynamics App, Tier and Node names from user-provided service, using default naming")
                         self._load_app_details()
@@ -153,11 +153,11 @@ class AppDynamicsInstaller(PHPExtensionHelper):
         print("Setting default AppDynamics App, Tier and Node names")
         try:
             AppDynamicsInstaller._app_name = self._application.get("space_name") + ":" + self._application.get("application_name")
-            print("AppDymamics default application-name = " + AppDynamicsInstaller._app_name)
+            print(("AppDymamics default application-name = " + AppDynamicsInstaller._app_name))
             AppDynamicsInstaller._tier_name = self._application.get("application_name")
-            print("AppDynamics default tier-name = " + AppDynamicsInstaller._tier_name)
+            print(("AppDynamics default tier-name = " + AppDynamicsInstaller._tier_name))
             AppDynamicsInstaller._node_name = AppDynamicsInstaller._tier_name
-            print("AppDynamics default node-name = " + AppDynamicsInstaller._node_name)
+            print(("AppDynamics default node-name = " + AppDynamicsInstaller._node_name))
         except Exception:
             print("Error populating default App, Tier and Node names")
 

@@ -1,9 +1,9 @@
-import urllib2
+import urllib as urllib2
 import re
 import logging
-from compile_extensions import CompileExtensions
 from subprocess import Popen
 from subprocess import PIPE
+from . compile_extensions import CompileExtensions
 
 
 class Downloader(object):
@@ -15,42 +15,42 @@ class Downloader(object):
 
     def _init_proxy(self):
         handlers = {}
-        for key in self._ctx.keys():
+        for key in list(self._ctx.keys()):
             if key.lower().endswith('_proxy') and self._ctx[key]:
                 handlers[key.split('_')[0]] = self._ctx[key]
         self._log.debug('Loaded proxy handlers [%s]', handlers)
         openers = []
         if handlers:
-            openers.append(urllib2.ProxyHandler(handlers))
-            for handler in handlers.values():
+            openers.append(urllib.request.ProxyHandler(handlers))
+            for handler in list(handlers.values()):
                 if '@' in handler:
-                    openers.append(urllib2.ProxyBasicAuthHandler())
-            opener = urllib2.build_opener(*openers)
-            urllib2.install_opener(opener)
+                    openers.append(urllib.request.ProxyBasicAuthHandler())
+            opener = urllib.request.build_opener(*openers)
+            urllib.request.install_opener(opener)
 
     def download(self, url, toFile):
         compile_exts = CompileExtensions(self._ctx['BP_DIR'])
         exit_code, translated_uri = compile_exts.download_dependency(url, toFile)
 
         if exit_code == 0:
-            print "Downloaded [%s] to [%s]" % (translated_uri, toFile)
+            print(("Downloaded [%s] to [%s]" % (translated_uri, toFile)))
         elif exit_code == 1:
             raise RuntimeError("Could not download dependency: %s" % url)
         elif exit_code == 3:
             raise RuntimeError("Checksum of downloaded dependency does not match expected value")
 
         _, patch_warning = compile_exts.warn_if_newer_patch(url)
-        print patch_warning
+        print(patch_warning)
 
     def custom_extension_download(self, url, filtered_url, toFile):
-        res = urllib2.urlopen(url)
+        res = urllib.request.urlopen(url)
         with open(toFile, 'w') as f:
             f.write(res.read())
-        print 'Downloaded [%s] to [%s]' % (filtered_url, toFile)
+        print(('Downloaded [%s] to [%s]' % (filtered_url, toFile)))
         self._log.info('Downloaded [%s] to [%s]', filtered_url, toFile)
 
     def download_direct(self, url):
-        buf = urllib2.urlopen(url).read()
+        buf = urllib.request.urlopen(url).read()
         self._log.info('Downloaded [%s] to memory', url)
         self._log.debug("Downloaded [%s] [%s]", url, buf)
         return buf
@@ -68,7 +68,7 @@ class CurlDownloader(object):
         cmd = ["curl", "-s",
                "-o", toFile,
                "-w", '%{http_code}']
-        for key in self._ctx.keys():
+        for key in list(self._ctx.keys()):
             if key.lower().endswith('_proxy'):
                 cmd.extend(['-x', self._ctx[key]])
         cmd.append(url)
@@ -81,13 +81,13 @@ class CurlDownloader(object):
                 (output.startswith('4') or
                  output.startswith('5')):
             raise RuntimeError("curl says [%s]" % output)
-        print 'Downloaded [%s] to [%s]' % (url, toFile)
+        print(('Downloaded [%s] to [%s]' % (url, toFile)))
         self._log.info('Downloaded [%s] to [%s]', url, toFile)
 
     def download_direct(self, url):
         cmd = ["curl", "-s",
                "-w", '<!-- Status: %{http_code} -->']
-        for key in self._ctx.keys():
+        for key in list(self._ctx.keys()):
             if key.lower().endswith('_proxy'):
                 cmd.extend(['-x', self._ctx[key]])
         cmd.append(url)

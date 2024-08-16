@@ -1,4 +1,4 @@
-from __future__ import print_function
+
 
 import signal
 import subprocess
@@ -6,7 +6,7 @@ import sys
 import logging
 from datetime import datetime
 from threading import Thread
-from Queue import Queue, Empty
+from queue import Queue, Empty
 
 
 #
@@ -209,7 +209,7 @@ class ProcessManager(object):
 
     def _init_printers(self):
         width = max(len(p.name) for p in
-                    filter(lambda x: not x.quiet, self.processes))
+                    [x for x in self.processes if not x.quiet])
         for proc in self.processes:
             proc.printer = Printer(sys.stdout,
                                    name=proc.name,

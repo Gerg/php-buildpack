@@ -14,7 +14,6 @@ function main() {
     cp -r "/tmp/php-buildpack/ruby/." "$install_dir"
   fi
   export PATH="$install_dir/bin:${PATH:-}"
-  alias ruby=ruby3
 }
 
 function setup_ruby() {
