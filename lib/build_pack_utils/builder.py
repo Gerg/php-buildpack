@@ -4,27 +4,27 @@ import shutil
 import re
 import logging
 from collections import defaultdict
-from StringIO import StringIO
+from io import StringIO
 from subprocess import Popen
 from subprocess import PIPE
-from cloudfoundry import CloudFoundryUtil
-from cloudfoundry import CloudFoundryInstaller
-from detecter import TextFileSearch
-from detecter import ComposerJsonSearch
-from detecter import RegexFileSearch
-from detecter import StartsWithFileSearch
-from detecter import EndsWithFileSearch
-from detecter import ContainsFileSearch
-from runner import BuildPack
-from utils import rewrite_cfgs
-from detecter import RegexFileSearch
-from detecter import StartsWithFileSearch
-from detecter import EndsWithFileSearch
-from detecter import ContainsFileSearch
-from runner import BuildPack
-from utils import rewrite_cfgs
-from utils import process_extension
-from utils import process_extensions
+from . cloudfoundry import CloudFoundryUtil
+from . cloudfoundry import CloudFoundryInstaller
+from . detecter import TextFileSearch
+from . detecter import ComposerJsonSearch
+from . detecter import RegexFileSearch
+from . detecter import StartsWithFileSearch
+from . detecter import EndsWithFileSearch
+from . detecter import ContainsFileSearch
+from . runner import BuildPack
+from . utils import rewrite_cfgs
+from . detecter import RegexFileSearch
+from . detecter import StartsWithFileSearch
+from . detecter import EndsWithFileSearch
+from . detecter import ContainsFileSearch
+from . runner import BuildPack
+from . utils import rewrite_cfgs
+from . utils import process_extension
+from . utils import process_extensions
 
 
 _log = logging.getLogger('builder')
@@ -166,10 +166,10 @@ class Detecter(object):
         #  conform to the requirements of CF's detect script
         #  which must set exit codes
         if self._detecter and self._detecter.search(self._root):
-            print self._output
+            print((self._output))
             sys.exit(0)
         elif not self._continue:
-            print 'no'
+            print('no')
             sys.exit(1)
         else:
             return self._builder
@@ -182,7 +182,7 @@ class Installer(object):
         self._installer = CloudFoundryInstaller(self.builder._ctx)
 
     def package(self, key):
-        if key in self.builder._ctx.keys():
+        if key in list(self.builder._ctx.keys()):
             key = self.builder._ctx[key]
         self.builder._ctx['%s_INSTALL_PATH' % key] = \
             self._installer.install_binary(key)
@@ -324,7 +324,7 @@ class ModuleInstaller(object):
                 self._log.debug('Module %s failed to install because',
                                 module, exc_info=True)
             finally:
-                if 'MODULE_NAME' in self._ctx.keys():
+                if 'MODULE_NAME' in list(self._ctx.keys()):
                     del self._ctx['MODULE_NAME']
         return self._installer
 
@@ -459,7 +459,7 @@ class Runner(object):
     def out_of(self, path):
         if hasattr(path, '__call__'):
             self._path = path(self._builder._ctx)
-        elif path in self._builder._ctx.keys():
+        elif path in list(self._builder._ctx.keys()):
             self._path = self._builder._ctx[path]
         else:
             self._path = self._builder._ctx.format(path)
@@ -501,7 +501,7 @@ class RunnerEnvironmentVariableBuilder(object):
             raise ValueError('You must specify a name')
         if hasattr(value, '__call__'):
             value = value()
-        elif value in self._runner._builder._ctx.keys():
+        elif value in list(self._runner._builder._ctx.keys()):
             value = self._runner._builder._ctx[value]
         self._runner._env[self._name] = value
         return self._runner
@@ -584,7 +584,7 @@ class FileUtil(object):
         return self
 
     def under(self, path):
-        if path in self._builder._ctx.keys():
+        if path in list(self._builder._ctx.keys()):
             self._from_path = self._builder._ctx[path]
         else:
             self._from_path = self._builder._ctx.format(path)
@@ -593,7 +593,7 @@ class FileUtil(object):
         return self
 
     def into(self, path):
-        if path in self._builder._ctx.keys():
+        if path in list(self._builder._ctx.keys()):
             self._into_path = self._builder._ctx[path]
         else:
             self._into_path = self._builder._ctx.format(path)
@@ -622,8 +622,7 @@ class FileUtil(object):
             if not os.path.exists(self._from_path):
                 raise ValueError("Source path [%s] does not exist"
                                  % self._from_path)
-            for root, dirs, files in os.walk(self._from_path.decode('utf-8'),
-                                             topdown=False):
+            for root, dirs, files in os.walk(self._from_path, topdown=False):
                 for f in files:
                     fromPath = os.path.join(root, f)
                     toPath = fromPath.replace(self._from_path, self._into_path)
@@ -704,7 +703,7 @@ class StartScriptBuilder(object):
         with open(startScriptPath, 'wt') as out:
             if self.content:
                 out.write('\n'.join(self.content))
-        os.chmod(startScriptPath, 0755)
+        os.chmod(startScriptPath, 0o755)
         return self.builder
 
 
@@ -732,7 +731,7 @@ class ScriptCommandBuilder(object):
     def with_argument(self, argument):
         if hasattr(argument, '__call__'):
             argument = argument()
-        elif argument in self._builder._ctx.keys():
+        elif argument in list(self._builder._ctx.keys()):
             argument = self._builder._ctx[argument]
         self._args.append(argument)
         return self
@@ -791,7 +790,7 @@ class EnvironmentVariableBuilder(object):
 
     def from_context(self, name):
         builder = self._scriptBuilder.builder
-        if name not in builder._ctx.keys():
+        if name not in list(builder._ctx.keys()):
             raise ValueError('[%s] is not in the context' % name)
         value = builder._ctx[name]
         value = value.replace(builder._ctx['BUILD_DIR'], '$HOME')
@@ -808,7 +807,7 @@ class EnvironmentVariableBuilder(object):
         builder = self._scriptBuilder.builder
         if hasattr(value, '__call__'):
             value = value()
-        elif value in builder._ctx.keys():
+        elif value in list(builder._ctx.keys()):
             value = builder._ctx[value]
         value = builder._ctx.format(value)
         value = value.replace(builder._ctx['BUILD_DIR'], '$HOME')
@@ -856,7 +855,7 @@ class SaveBuilder(object):
         all_extns_env = defaultdict(list)
 
         def process(env):
-            for key, val in env.iteritems():
+            for key, val in env.items():
                 if hasattr(val, 'append'):
                     all_extns_env[key].extend(val)
                 else:
@@ -871,7 +870,7 @@ class SaveBuilder(object):
             os.makedirs(profile_d_directory)
         envPath = os.path.join(profile_d_directory, 'bp_env_vars.sh')
         with open(envPath, 'at') as envFile:
-            for key, val in all_extns_env.iteritems():
+            for key, val in all_extns_env.items():
                 if len(val) == 0:
                     val = ''
                 elif len(val) == 1:
@@ -885,7 +884,7 @@ class SaveBuilder(object):
         def process(cmds):
             procPath = os.path.join(self._builder._ctx['BUILD_DIR'], '.procs')
             with open(procPath, 'at') as procFile:
-                for name, cmd in cmds.iteritems():
+                for name, cmd in cmds.items():
                     procFile.write("%s: %s\n" % (name, ' '.join(cmd)))
         process_extensions(self._builder._ctx, 'service_commands', process)
         return self
@@ -980,6 +979,6 @@ class Builder(object):
         return SaveBuilder(self)
 
     def release(self):
-        print 'default_process_types:'
-        print '  web: $HOME/%s' % self._ctx.get('START_SCRIPT_NAME',
-                                                '.bp/bin/start')
+        print('default_process_types:')
+        print(('  web: $HOME/%s' % self._ctx.get('START_SCRIPT_NAME',
+                                                '.bp/bin/start')))

@@ -37,4 +37,4 @@ fi
 
 export PYTHONPATH=$BP/lib
 VERSION="$(cat "$BP"/VERSION)"
-python2 "$BP/"scripts/detect.py "$1" "$VERSION"
+python "$BP/"scripts/detect.py "$1" "$VERSION"

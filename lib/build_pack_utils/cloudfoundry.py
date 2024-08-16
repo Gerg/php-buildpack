@@ -1,18 +1,19 @@
+import io
 import os
 import sys
 import json
 import tempfile
 import shutil
-import utils
 import logging
-from compile_extensions import CompileExtensions
-from urlparse import urlparse
-from zips import UnzipUtil
-from downloads import Downloader
-from downloads import CurlDownloader
-from utils import safe_makedirs
-from utils import find_git_url
-from utils import wrap
+from urllib.parse import urlparse
+from . compile_extensions import CompileExtensions
+from . zips import UnzipUtil
+from . downloads import Downloader
+from . downloads import CurlDownloader
+from . import utils
+from . utils import safe_makedirs
+from . utils import find_git_url
+from . utils import wrap
 
 
 _log = logging.getLogger('cloudfoundry')
@@ -28,10 +29,10 @@ class CloudFoundryUtil(object):
              sys.stdout.close()
              os.dup2(tmp_fd, fileno)
              os.close(tmp_fd)
-             sys.stdout = os.fdopen(fileno, "w", 0)
+             sys.stdout = io.TextIOWrapper(os.fdopen(fileno, "wb", buffering=0), write_through=True)
         ctx = utils.FormattedDict()
         # Add environment variables
-        for key, val in os.environ.iteritems():
+        for key, val in list(os.environ.items()):
             ctx[key] = wrap(val)
         # Convert JSON env variables
         ctx['VCAP_APPLICATION'] = json.loads(ctx.get('VCAP_APPLICATION',
@@ -44,7 +45,7 @@ class CloudFoundryUtil(object):
         # Cache space for the build pack
         ctx['CACHE_DIR'] = (len(sys.argv) == 3) and sys.argv[2] or None
         # Temp space
-        if 'TMPDIR' not in ctx.keys():
+        if 'TMPDIR' not in list(ctx.keys()):
             ctx['TMPDIR'] = tempfile.gettempdir()
         # Make sure cache & build directories exist
         if not os.path.exists(ctx['BUILD_DIR']):
@@ -115,14 +116,14 @@ class CloudFoundryUtil(object):
             with open(cfgPath, 'rt') as cfgFile:
                 try:
                     return json.load(cfgFile)
-                except ValueError, e:
+                except ValueError as e:
                     _log.warn("Error reading [%s]", cfgPath)
                     _log.debug("Error reading [%s]", cfgPath, exc_info=e)
                     if step != 'detect':
-                        print 'Incorrectly formatted JSON object at: %s' % cfgPath
+                        print('Incorrectly formatted JSON object at: %s' % cfgPath)
                         cfgFile.seek(0)
                         for line in cfgFile:
-                            print line
+                            print(line)
                         exit(1)
         return {}
 

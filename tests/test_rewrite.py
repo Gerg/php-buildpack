@@ -50,7 +50,7 @@ class TestRewriteScriptPhp(BaseRewriteScript):
                                   stderr=subprocess.STDOUT,
                                   shell=True)
             assert False
-        except self.run.CalledProcessError, e:
+        except self.run.CalledProcessError as e:
             eq_('Argument required!  Specify path to configuration '
                 'directory.\n', e.output)
             eq_(255, e.returncode)

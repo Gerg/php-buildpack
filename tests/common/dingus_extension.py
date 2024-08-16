@@ -4,7 +4,7 @@ from dingus import patch
 def patches(patch_values):
     patcher_collection = PatcherCollection()
 
-    for object_path, new_object in patch_values.iteritems():
+    for object_path, new_object in patch_values.items():
         patcher_collection.add_patcher(patch(object_path, new_object))
 
     return patcher_collection

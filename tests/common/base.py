@@ -15,7 +15,7 @@ class BaseCompileApp(object):
             'CACHE_DIR': self.cache_dir,
             'TMPDIR': self.temp_dir
         }, '.')
-        if 'BP_DEBUG' in os.environ.keys():
+        if 'BP_DEBUG' in list(os.environ.keys()):
             self.bp._ctx['BP_DEBUG'] = True
         self.dh.copy_build_pack_to(self.bp.bp_dir)
         self.dh.register_to_delete(self.bp.bp_dir)

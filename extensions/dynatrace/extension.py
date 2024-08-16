@@ -16,7 +16,7 @@
 Downloads and configures Dynatrace OneAgent.
 """
 
-from __future__ import print_function
+
 
 import json
 import logging
@@ -25,7 +25,7 @@ import re
 import time
 from subprocess import call
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 _log = logging.getLogger('dynatrace')
 
@@ -56,7 +56,7 @@ class DynatraceInstaller(object):
     def _load_service_info(self):
         detected_services = []
         vcap_services = self._ctx.get('VCAP_SERVICES', {})
-        for provider, services in vcap_services.iteritems():
+        for provider, services in vcap_services.items():
             for service in services:
                 if 'dynatrace' in service.get('name', ''):
                     creds = service.get('credentials', {})
@@ -103,10 +103,10 @@ class DynatraceInstaller(object):
 
         for attempt in range(tries):
             try:
-                request = urllib2.Request(url)
+                request = urllib.request.Request(url)
                 request.add_header("user-agent", "cf-php-buildpack/" + self.get_buildpack_version())
                 request.add_header("Authorization", "Api-Token {token}".format(token=self._ctx['DYNATRACE_TOKEN']))
-                result = urllib2.urlopen(request)
+                result = urllib.request.urlopen(request)
                 f = open(dest, 'w')
                 f.write(result.read())
                 f.close()
@@ -203,10 +203,10 @@ class DynatraceInstaller(object):
 
         try:
             # fetch most recent OneAgent config from tenant API
-            request = urllib2.Request(agent_config_url)
+            request = urllib.request.Request(agent_config_url)
             request.add_header("user-agent", "cf-php-buildpack/" + self.get_buildpack_version())
             request.add_header("Authorization", "Api-Token {token}".format(token=self._ctx['DYNATRACE_TOKEN']))
-            result = urllib2.urlopen(request)
+            result = urllib.request.urlopen(request)
         except IOError as err:
             if skiperrors == 'true':
                 _log.warning('Error during agent config update, skipping it: %s' % err)
@@ -299,7 +299,7 @@ class DynatraceInstaller(object):
         # the API over the data we got from the local config file.
         # This replaces existing values and adds new ones.
         _log.debug("Starting with OneAgent configuration merging")
-        for section_name, section_content in config_from_api.items():
+        for section_name, section_content in list(config_from_api.items()):
             for key in section_content:
                 # checking if the required dict is already there.
                 # if not: initialize it
@@ -311,7 +311,7 @@ class DynatraceInstaller(object):
         # Write updated config back to ruxitagentproc.conf file
         try:
             overwrite_agent_config_file = open(agent_config_path, 'w')
-            for section_name, section_content in config_from_agent.items():
+            for section_name, section_content in list(config_from_agent.items()):
                 overwrite_agent_config_file.write(section_name + "\n")
                 for key in section_content:
                     write_line = key + " " + section_content[key] + "\n"

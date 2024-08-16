@@ -49,12 +49,12 @@ class TestNewRelic(object):
             'BP_DIR': self.buildpack_dir
         }))
 
-        eq_(True, 'NEWRELIC_VERSION' in nr._ctx.keys())
+        eq_(True, 'NEWRELIC_VERSION' in list(nr._ctx.keys()))
         del nr._ctx['NEWRELIC_VERSION']
 
         # and test it with our custom manifest
         nr._set_default_version(manifest_filename)
-        eq_(True, 'NEWRELIC_VERSION' in nr._ctx.keys())
+        eq_(True, 'NEWRELIC_VERSION' in list(nr._ctx.keys()))
         eq_(nr._ctx['NEWRELIC_VERSION'], '6.4.0.99')
 
     def test_set_default_version_bad_manifest(self):
@@ -84,11 +84,11 @@ class TestNewRelic(object):
             'PHP_VM': 'php',
             'BP_DIR': self.buildpack_dir
         }))
-        eq_(True, 'NEWRELIC_HOST' in nr._ctx.keys())
-        eq_(True, 'NEWRELIC_VERSION' in nr._ctx.keys())
-        eq_(True, 'NEWRELIC_PACKAGE' in nr._ctx.keys())
-        eq_(True, 'NEWRELIC_DOWNLOAD_URL' in nr._ctx.keys())
-        eq_(True, 'NEWRELIC_STRIP' in nr._ctx.keys())
+        eq_(True, 'NEWRELIC_HOST' in list(nr._ctx.keys()))
+        eq_(True, 'NEWRELIC_VERSION' in list(nr._ctx.keys()))
+        eq_(True, 'NEWRELIC_PACKAGE' in list(nr._ctx.keys()))
+        eq_(True, 'NEWRELIC_DOWNLOAD_URL' in list(nr._ctx.keys()))
+        eq_(True, 'NEWRELIC_STRIP' in list(nr._ctx.keys()))
 
     def testShouldNotInstall(self):
         nr = newrelic.NewRelicInstaller(utils.FormattedDict({
