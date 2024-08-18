@@ -145,7 +145,8 @@ class BuildPack(object):
                self._ctx['BUILD_DIR']]
         return check_output(" ".join(cmd),
                             stderr=subprocess.STDOUT,
-                            shell=True).strip()
+                            shell=True,
+                            text=True).strip()
 
     def _compile(self):
         self._log.debug("Running compile script with build dir [%s] "

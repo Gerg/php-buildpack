@@ -117,7 +117,7 @@ class ComposerConfiguration(object):
         except ValueError as e:
             sys.tracebacklimit = 0
             sys.stderr.write('-------> Invalid JSON present in {0}. Parser said: "{1}"'
-                             .format(os.path.basename(file_path), e.message))
+                             .format(os.path.basename(file_path), str(e)))
             sys.stderr.write("\n")
             sys.exit(1)
         return composer
