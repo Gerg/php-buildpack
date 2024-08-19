@@ -1,0 +1,1 @@
+pip install --target=lib pyyaml==6.0.2

@@ -14,6 +14,7 @@ import (
 	"github.com/blang/semver"
 	"github.com/cloudfoundry/libbuildpack"
 	"github.com/cloudfoundry/libbuildpack/cutlass"
+	"github.com/cloudfoundry/libbuildpack/cutlass/v7"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -44,7 +45,7 @@ var _ = SynchronizedBeforeSuite(func() []byte {
 	Expect(os.Getenv("COMPOSER_GITHUB_OAUTH_TOKEN")).ToNot(BeEmpty(), "Please set COMPOSER_GITHUB_OAUTH_TOKEN") // Required for some tests
 	format.MaxLength = 0
 	if buildpackVersion == "" {
-		packagedBuildpack, err := cutlass.PackageUniquelyVersionedBuildpack(stack, ApiHasStackAssociation())
+		packagedBuildpack, err := v7.PackageUniquelyVersionedBuildpack(stack, ApiHasStackAssociation())
 		Expect(err).NotTo(HaveOccurred())
 
 		data, err := json.Marshal(packagedBuildpack)
