@@ -2,7 +2,6 @@ import os
 import os.path
 import tempfile
 import shutil
-import mock
 from nose.tools import eq_
 from nose.tools import assert_raises_regex
 from build_pack_utils import utils
@@ -15,6 +14,7 @@ from compile_helpers import find_all_php_versions
 from compile_helpers import validate_php_version
 from compile_helpers import validate_php_ini_extensions
 from compile_helpers import setup_log_dir
+from unittest import mock
 
 
 class TestCompileHelpers(object):
@@ -325,10 +325,10 @@ class TestCompileHelpers(object):
         ctx = {'BP_DIR': '.'}
         manifest = load_manifest(ctx)
         assert manifest is not None
-        assert 'dependencies' in manifest.keys()
-        assert 'language' in manifest.keys()
-        assert 'url_to_dependency_map' in manifest.keys()
-        assert 'exclude_files' in manifest.keys()
+        assert 'dependencies' in list(manifest.keys())
+        assert 'language' in list(manifest.keys())
+        assert 'url_to_dependency_map' in list(manifest.keys())
+        assert 'exclude_files' in list(manifest.keys())
 
     def test_find_all_php_versions(self):
         ctx = {'BP_DIR': '.'}

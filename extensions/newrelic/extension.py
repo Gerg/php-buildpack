@@ -66,7 +66,7 @@ class NewRelicInstaller(object):
         self._ctx['NEWRELIC_VERSION'] = output
 
     def _merge_defaults(self):
-        for key, val in DEFAULTS.iteritems():
+        for key, val in DEFAULTS.items():
             if key not in self._ctx:
                 self._ctx[key] = val
 
@@ -91,7 +91,7 @@ class NewRelicInstaller(object):
         self.app_name = vcap_app.get('name', None)
         self._log.debug("App Name [%s]", self.app_name)
 
-        if 'NEWRELIC_LICENSE' in self._ctx.keys():
+        if 'NEWRELIC_LICENSE' in list(self._ctx.keys()):
             if self._detected:
                 self._log.warn("Detected a NewRelic Service & Manual Key,"
                                " using the manual key.")

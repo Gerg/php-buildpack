@@ -220,7 +220,7 @@ class TestComposer(object):
         })
         config = self.extension_module.ComposerConfiguration(ctx)
         config.configure()
-        assert 'PHP_EXTENSIONS' in ctx.keys()
+        assert 'PHP_EXTENSIONS' in list(ctx.keys())
         assert list == type(ctx['PHP_EXTENSIONS'])
         assert 4 == len(ctx['PHP_EXTENSIONS'])
         assert 'openssl' == ctx['PHP_EXTENSIONS'][0]
@@ -240,7 +240,7 @@ class TestComposer(object):
         })
         config = self.extension_module.ComposerConfiguration(ctx)
         config.configure()
-        assert 'PHP_EXTENSIONS' in ctx.keys()
+        assert 'PHP_EXTENSIONS' in list(ctx.keys())
         assert list == type(ctx['PHP_EXTENSIONS'])
         assert 6 == len(ctx['PHP_EXTENSIONS'])
         assert 'a' == ctx['PHP_EXTENSIONS'][0]
@@ -263,7 +263,7 @@ class TestComposer(object):
         config.configure()
         assert '7.1.3' == ctx['PHP_VERSION']
         assert 'php' == ctx['PHP_VM']
-        assert 'PHP_EXTENSIONS' in ctx.keys()
+        assert 'PHP_EXTENSIONS' in list(ctx.keys())
         assert list == type(ctx['PHP_EXTENSIONS'])
         assert 3 == len(ctx['PHP_EXTENSIONS'])
         assert 'openssl' == ctx['PHP_EXTENSIONS'][0]
@@ -278,7 +278,7 @@ class TestComposer(object):
         })
         config = self.extension_module.ComposerConfiguration(ctx)
         config.configure()
-        assert 'PHP_EXTENSIONS' in ctx.keys()
+        assert 'PHP_EXTENSIONS' in list(ctx.keys())
         assert list == type(ctx['PHP_EXTENSIONS'])
         assert 2 == len(ctx['PHP_EXTENSIONS'])
         assert 'a' in ctx['PHP_EXTENSIONS']
@@ -313,7 +313,7 @@ class TestComposer(object):
         self.extension_module.find_composer_path = find_composer_path_none_found_stub
         try:
             self.extension_module.ComposerConfiguration(ctx).configure()
-            assert 'PHP_EXTENSIONS' not in ctx.keys()
+            assert 'PHP_EXTENSIONS' not in list(ctx.keys())
         finally:
             self.extension_module.find_composer_path = fcp_orig
 
@@ -321,7 +321,7 @@ class TestComposer(object):
         self.extension_module.find_composer_path = find_composer_path_only_json_found_stub
         try:
             self.extension_module.ComposerConfiguration(ctx).configure()
-            assert 'PHP_EXTENSIONS' in ctx.keys()
+            assert 'PHP_EXTENSIONS' in list(ctx.keys())
             assert 3 == len(ctx['PHP_EXTENSIONS'])
             assert 'openssl' in ctx['PHP_EXTENSIONS']
             assert 'fileinfo' in ctx['PHP_EXTENSIONS']
@@ -333,7 +333,7 @@ class TestComposer(object):
         self.extension_module.find_composer_path = find_composer_path_only_lock_found_stub
         try:
             self.extension_module.ComposerConfiguration(ctx).configure()
-            assert 'PHP_EXTENSIONS' in ctx.keys()
+            assert 'PHP_EXTENSIONS' in list(ctx.keys())
             assert 4 == len(ctx['PHP_EXTENSIONS'])
             assert 'openssl' in ctx['PHP_EXTENSIONS']
             assert 'gd' in ctx['PHP_EXTENSIONS']
@@ -353,7 +353,7 @@ class TestComposer(object):
         config = self.extension_module.ComposerConfiguration(ctx)
         try:
             config.read_version_from_composer('php')
-        except SystemExit, e:
+        except SystemExit as e:
             eq_(1, e.code)
 
     def test_pick_php_version(self):
@@ -557,7 +557,7 @@ class TestComposer(object):
 
             built_environment = cr._build_composer_environment()
 
-        for key, val in built_environment.iteritems():
+        for key, val in built_environment.items():
             assert type(val) == str, \
                 "Expected [%s]:[%s] to be type `str`, but found type [%s]" % (
                     key, val, type(val))
@@ -585,7 +585,7 @@ class TestComposer(object):
                 built_environment = cr._build_composer_environment()
                 assert "{exact_match}" == built_environment['SOME_KEY'], \
                     "value should match"
-            except KeyError, e:
+            except KeyError as e:
                 assert 'exact_match' != e.message, \
                     "Should not try to evaluate value [%s]" % e
                 raise

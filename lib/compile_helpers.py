@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from __future__ import print_function
+
 import os
 import os.path
 import re
@@ -123,7 +123,7 @@ def _get_compiled_modules(ctx):
         'LD_LIBRARY_PATH': os.path.join(ctx["PHP_INSTALL_PATH"], 'lib')
     }
 
-    process = subprocess.Popen([php_binary, '-m'], stdout=subprocess.PIPE, env=env)
+    process = subprocess.Popen([php_binary, '-m'], stdout=subprocess.PIPE, env=env, text=True)
     exit_code = process.wait()
     output = process.stdout.read().rstrip()
 

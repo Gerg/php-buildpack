@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import sys
 
 
 def preprocess_commands(ctx):
@@ -37,8 +38,8 @@ def service_environment(ctx):
 
 
 def compile(install):
-    print 'Installing HTTPD'
-    print 'HTTPD %s' % (install.builder._ctx['HTTPD_VERSION'])
+    print('Installing HTTPD')
+    print('HTTPD %s' % (install.builder._ctx['HTTPD_VERSION']))
 
     install.builder._ctx['PHP_FPM_LISTEN'] = '127.0.0.1:9000'
     (install
