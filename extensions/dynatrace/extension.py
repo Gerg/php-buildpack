@@ -107,7 +107,7 @@ class DynatraceInstaller(object):
                 request.add_header("user-agent", "cf-php-buildpack/" + self.get_buildpack_version())
                 request.add_header("Authorization", "Api-Token {token}".format(token=self._ctx['DYNATRACE_TOKEN']))
                 result = urllib.request.urlopen(request)
-                f = open(dest, 'w')
+                f = open(dest, 'wb')
                 f.write(result.read())
                 f.close()
                 return

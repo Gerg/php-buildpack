@@ -1,4 +1,4 @@
-import urllib as urllib2
+import urllib.request
 import re
 import logging
 from subprocess import Popen
@@ -44,7 +44,7 @@ class Downloader(object):
 
     def custom_extension_download(self, url, filtered_url, toFile):
         res = urllib.request.urlopen(url)
-        with open(toFile, 'w') as f:
+        with open(toFile, 'wb') as f:
             f.write(res.read())
         print(('Downloaded [%s] to [%s]' % (filtered_url, toFile)))
         self._log.info('Downloaded [%s] to [%s]', filtered_url, toFile)

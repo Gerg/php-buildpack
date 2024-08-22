@@ -17,7 +17,6 @@ github.com/cloudfoundry/libbuildpack/bratshelper
 github.com/cloudfoundry/libbuildpack/cutlass
 github.com/cloudfoundry/libbuildpack/cutlass/docker
 github.com/cloudfoundry/libbuildpack/cutlass/glow
-github.com/cloudfoundry/libbuildpack/cutlass/v7
 github.com/cloudfoundry/libbuildpack/packager
 # github.com/elazarl/goproxy v0.0.0-20231117061959-7cc037d33fb5
 ## explicit
